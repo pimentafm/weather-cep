@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/pimentafm/weather-cep/configs"
 	"github.com/pimentafm/weather-cep/internal/infrastructure/api"
 	handlers "github.com/pimentafm/weather-cep/internal/infrastructure/http"
 	"github.com/pimentafm/weather-cep/internal/usecase"
@@ -26,16 +26,15 @@ func (r *TemperatureRepository) GetTemperatureByCity(city string) (float64, erro
 }
 
 func main() {
-	// Initialize dependencies
-
-	err := godotenv.Load()
+	cfg, err := configs.LoadConfig(".")
 	if err != nil {
-		fmt.Println("Error loading .env file")
-		os.Exit(1)
+		log.Fatal("Cannot load config:", err)
 	}
 
+	fmt.Printf("Weather API Key: %s\n", cfg.WeatherAPIKey)
+
 	viaCEPAPI := api.NewViaCEPAPI()
-	weatherAPI := api.NewWeatherAPI(os.Getenv("WEATHER_API_KEY"))
+	weatherAPI := api.NewWeatherAPI(cfg.WeatherAPIKey)
 
 	temperatureRepo := &TemperatureRepository{
 		viaCEPAPI:  viaCEPAPI,

@@ -29,6 +29,8 @@ func (w *WeatherAPI) GetTemperature(city string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
+
+	fmt.Println(url)
 	defer resp.Body.Close()
 
 	var weatherResp weatherAPIResponse
