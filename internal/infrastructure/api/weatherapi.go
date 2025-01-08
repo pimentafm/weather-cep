@@ -30,7 +30,6 @@ func (w *WeatherAPI) GetTemperature(city string) (float64, error) {
 		return 0, err
 	}
 
-	fmt.Println(url)
 	defer resp.Body.Close()
 
 	var weatherResp weatherAPIResponse

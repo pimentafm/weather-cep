@@ -1,4 +1,4 @@
-module github.com/pimentafm/weather-cep
+module github.com/pimentafm/weatherapi
 
 go 1.23.4
 

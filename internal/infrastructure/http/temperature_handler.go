@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/pimentafm/weather-cep/internal/usecase"
-	"github.com/pimentafm/weather-cep/pkg/cerrors"
+	"github.com/pimentafm/weatherapi/internal/usecase"
+	"github.com/pimentafm/weatherapi/pkg/cerrors"
 )
 
 type TemperatureHandler struct {

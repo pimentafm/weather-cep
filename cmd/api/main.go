@@ -1,15 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/pimentafm/weather-cep/configs"
-	"github.com/pimentafm/weather-cep/internal/infrastructure/api"
-	handlers "github.com/pimentafm/weather-cep/internal/infrastructure/http"
-	"github.com/pimentafm/weather-cep/internal/usecase"
+	"github.com/pimentafm/weatherapi/configs"
+	"github.com/pimentafm/weatherapi/internal/infrastructure/api"
+	handlers "github.com/pimentafm/weatherapi/internal/infrastructure/http"
+	"github.com/pimentafm/weatherapi/internal/usecase"
 )
 
 type TemperatureRepository struct {
@@ -30,8 +29,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Cannot load config:", err)
 	}
-
-	fmt.Printf("Weather API Key: %s\n", cfg.WeatherAPIKey)
 
 	viaCEPAPI := api.NewViaCEPAPI()
 	weatherAPI := api.NewWeatherAPI(cfg.WeatherAPIKey)

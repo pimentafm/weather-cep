@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/pimentafm/weather-cep/internal/domain/entity"
-	"github.com/pimentafm/weather-cep/internal/domain/repository"
+	"github.com/pimentafm/weatherapi/internal/domain/entity"
+	"github.com/pimentafm/weatherapi/internal/domain/repository"
 )
 
 type GetTemperatureUseCase struct {
