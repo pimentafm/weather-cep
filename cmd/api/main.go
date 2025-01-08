@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
-type Address struct {
+type ViaCEPResponse struct {
 	CEP         string `json:"cep"`
 	Logradouro  string `json:"logradouro"`
 	Complemento string `json:"complemento"`
@@ -20,11 +21,26 @@ type Address struct {
 	GIA         string `json:"gia"`
 	DDD         string `json:"ddd"`
 	SIAFI       string `json:"siafi"`
+	Erro        bool   `json:"erro"`
 }
 
-const baseURL = "http://viacep.com.br/ws/"
+type WeatherAPIResponse struct {
+	Current struct {
+		TempC float64 `json:"temp_c"`
+	} `json:"current"`
+}
+
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		os.Exit(1)
+	}
+
 	city, err := getCityFromCEP("35780000")
 	if err != nil {
 		fmt.Println(err)
@@ -32,34 +48,51 @@ func main() {
 	}
 
 	fmt.Println(city)
+
+	temperature, err := getCityTemperature(city)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println(temperature)
 }
 
 func getCityFromCEP(cep string) (string, error) {
-	url := fmt.Sprintf("%s%s/json/", baseURL, cep)
-	req, err := http.Get(url)
+	url := fmt.Sprintf("https://viacep.com.br/ws/%s/json/", cep)
+	resp, err := http.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("request failed: %v", err)
+		return "", err
 	}
-	defer req.Body.Close()
+	defer resp.Body.Close()
 
-	if req.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected status code: %d", req.StatusCode)
+	var viaCEPResp ViaCEPResponse
+	if err := json.NewDecoder(resp.Body).Decode(&viaCEPResp); err != nil {
+		return "", err
 	}
 
-	res, err := io.ReadAll(req.Body)
+	if viaCEPResp.Erro {
+		return "", fmt.Errorf("CEP not found")
+	}
+
+	return viaCEPResp.Localidade, nil
+}
+
+func getCityTemperature(city string) (float64, error) {
+	apiKey := os.Getenv("WEATHERAPI_API_KEY")
+	url := fmt.Sprintf("https://api.weatherapi.com/v1/current.json?q=%s&key=%s", city, apiKey)
+
+	res, err := http.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response: %v", err)
+		return 0, err
 	}
 
-	var data Address
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		return "", fmt.Errorf("failed to unmarshal json: %v", err)
+	defer res.Body.Close()
+
+	var weatherResponse WeatherAPIResponse
+	if err := json.NewDecoder(res.Body).Decode(&weatherResponse); err != nil {
+		return 0, err
 	}
 
-	if data.Localidade == "" {
-		return "", fmt.Errorf("localidade not found for CEP: %s", cep)
-	}
-
-	return data.Localidade, nil
+	return weatherResponse.Current.TempC, nil
 }
