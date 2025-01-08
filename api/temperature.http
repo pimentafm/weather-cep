@@ -1,0 +1,7 @@
+### Variables
+@baseUrl = http://localhost:8080
+
+### Get Temperature
+GET {{baseUrl}}/temperature/35780000
+Host : localhost:8080
+Content-Type: application/json
