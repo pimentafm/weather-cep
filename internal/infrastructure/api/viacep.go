@@ -20,7 +20,7 @@ type viaCEPResponse struct {
 	GIA         string `json:"gia"`
 	DDD         string `json:"ddd"`
 	SIAFI       string `json:"siafi"`
-	Erro        bool   `json:"erro"`
+	Erro        string `json:"erro"`
 }
 
 func NewViaCEPAPI() *ViaCEPAPI {
@@ -35,13 +35,17 @@ func (v *ViaCEPAPI) GetCity(cep string) (string, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusBadRequest {
+		return "", fmt.Errorf("invalid zipcode")
+	}
+
 	var viaCEPResp viaCEPResponse
 	if err := json.NewDecoder(resp.Body).Decode(&viaCEPResp); err != nil {
 		return "", err
 	}
 
-	if viaCEPResp.Erro {
-		return "", fmt.Errorf("CEP not found")
+	if viaCEPResp.Erro == "true" {
+		return "", fmt.Errorf("can not find zipcode")
 	}
 
 	return viaCEPResp.Localidade, nil

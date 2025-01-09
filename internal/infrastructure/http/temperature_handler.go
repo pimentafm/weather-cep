@@ -33,7 +33,6 @@ func (h *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 
 	cep := r.URL.Path[len("/temperature/"):]
 
-	// Validate CEP format
 	match, _ := regexp.MatchString(`^\d{8}$`, cep)
 	if !match {
 		h.respondWithError(w, http.StatusUnprocessableEntity, "invalid zipcode")
@@ -46,7 +45,7 @@ func (h *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 		case cerrors.ErrCEPNotFound:
 			h.respondWithError(w, http.StatusNotFound, "can not find zipcode")
 		default:
-			h.respondWithError(w, http.StatusInternalServerError, "internal server error")
+			h.respondWithError(w, http.StatusNotFound, "can not find zipcode")
 		}
 		return
 	}
