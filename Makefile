@@ -10,6 +10,12 @@ weatherapi-build:
 	docker build -t "$(PROJECT_NAME)/weatherapi:v1.0.0" -f Dockerfile .
 
 weatherapi-run:
-	docker run --name ${PROJECT_NAME}-weatherapi -p 8080:8080 -e  WEATHERAPI_API_KEY=${WEATHERAPI_API_KEY} "$(PROJECT_NAME)/weatherapi:v1.0.0"
+	docker run --name ${PROJECT_NAME}-weatherapi -p 8080:8080 --env-file .env "$(PROJECT_NAME)/weatherapi:v1.0.0"
 
+delete-container:
+	docker rm -f ${PROJECT_NAME}-weatherapi
+
+docker-cleanup:
+	./scripts/docker-cleanup.sh
+	
 .PHONY: run

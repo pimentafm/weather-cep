@@ -25,6 +25,7 @@ func NewWeatherAPI(apiKey string) *WeatherAPI {
 func (w *WeatherAPI) GetTemperature(city string) (float64, error) {
 	url := fmt.Sprintf("https://api.weatherapi.com/v1/current.json?q=%s&key=%s", city, w.apiKey)
 
+	fmt.Printf("URL: %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return 0, err

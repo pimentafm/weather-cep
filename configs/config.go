@@ -1,6 +1,9 @@
 package configs
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/spf13/viper"
 )
 
@@ -13,7 +16,10 @@ func LoadConfig(path string) (*conf, error) {
 
 	viper.AutomaticEnv()
 
-	if path != "." {
+	if apiKey := os.Getenv("WEATHERAPI_API_KEY"); apiKey != "" {
+		fmt.Println("Using API key from environment variable")
+		cfg.WeatherAPIKey = apiKey
+	} else {
 		viper.SetConfigName("app_config")
 		viper.SetConfigType("env")
 		viper.AddConfigPath(path)
@@ -24,10 +30,10 @@ func LoadConfig(path string) (*conf, error) {
 				return nil, err
 			}
 		}
-	}
 
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, err
+		if err := viper.Unmarshal(&cfg); err != nil {
+			return nil, err
+		}
 	}
 
 	return &cfg, nil
