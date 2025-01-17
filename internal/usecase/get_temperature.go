@@ -6,22 +6,24 @@ import (
 )
 
 type GetTemperatureUseCase struct {
-	temperatureRepo repository.TemperatureRepository
+	CityRepo        repository.CityRepository
+	TemperatureRepo repository.TemperatureRepository
 }
 
-func NewGetTemperatureUseCase(repo repository.TemperatureRepository) *GetTemperatureUseCase {
+func NewGetTemperatureUseCase(cityRepo repository.CityRepository, tempRepo repository.TemperatureRepository) *GetTemperatureUseCase {
 	return &GetTemperatureUseCase{
-		temperatureRepo: repo,
+		CityRepo:        cityRepo,
+		TemperatureRepo: tempRepo,
 	}
 }
 
 func (uc *GetTemperatureUseCase) Execute(cep string) (*entity.Temperature, error) {
-	city, err := uc.temperatureRepo.GetCityByCEP(cep)
+	city, err := uc.CityRepo.GetCityByCEP(cep)
 	if err != nil {
 		return nil, err
 	}
 
-	tempCelsius, err := uc.temperatureRepo.GetTemperatureByCity(city)
+	tempCelsius, err := uc.TemperatureRepo.GetTemperatureByCity(city.Localidade)
 	if err != nil {
 		return nil, err
 	}

@@ -7,22 +7,9 @@ import (
 
 	"github.com/pimentafm/weatherapi/configs"
 	"github.com/pimentafm/weatherapi/internal/infrastructure/api"
-	handlers "github.com/pimentafm/weatherapi/internal/infrastructure/http"
+	"github.com/pimentafm/weatherapi/internal/infrastructure/handlers"
 	"github.com/pimentafm/weatherapi/internal/usecase"
 )
-
-type TemperatureRepository struct {
-	viaCEPAPI  *api.ViaCEPAPI
-	weatherAPI *api.WeatherAPI
-}
-
-func (r *TemperatureRepository) GetCityByCEP(cep string) (string, error) {
-	return r.viaCEPAPI.GetCity(cep)
-}
-
-func (r *TemperatureRepository) GetTemperatureByCity(city string) (float64, error) {
-	return r.weatherAPI.GetTemperature(city)
-}
 
 func main() {
 	cfg, err := configs.LoadConfig(".")
@@ -30,18 +17,20 @@ func main() {
 		log.Fatal("Cannot load config:", err)
 	}
 
-	viaCEPAPI := api.NewViaCEPAPI()
+	viaCEPAPI := api.NewCityAPI()
 	weatherAPI := api.NewWeatherAPI(cfg.WeatherAPIKey)
 
-	temperatureRepo := &TemperatureRepository{
-		viaCEPAPI:  viaCEPAPI,
-		weatherAPI: weatherAPI,
-	}
+	cityRepo := viaCEPAPI
+	temperatureRepo := weatherAPI
 
-	getTemperatureUseCase := usecase.NewGetTemperatureUseCase(temperatureRepo)
+	getCityUseCase := usecase.NewGetCityUseCase(cityRepo)
+	getTemperatureUseCase := usecase.NewGetTemperatureUseCase(cityRepo, temperatureRepo)
+
+	cityHandler := handlers.NewCityHandler(getCityUseCase)
 	temperatureHandler := handlers.NewTemperatureHandler(getTemperatureUseCase)
 
 	// Setup routes
+	http.HandleFunc("/city/", cityHandler.GetCity)
 	http.HandleFunc("/temperature/", temperatureHandler.GetTemperature)
 
 	// Start server
