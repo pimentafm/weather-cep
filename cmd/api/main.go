@@ -17,23 +17,21 @@ func main() {
 		log.Fatal("Cannot load config:", err)
 	}
 
-	viaCEPAPI := api.NewCityAPI()
-	weatherAPI := api.NewWeatherAPI(cfg.WeatherAPIKey)
+	cepAPI := api.NewCityAPI()
+	temperatureAPI := api.NewWeatherAPI(cfg.WeatherAPIKey)
 
-	cityRepo := viaCEPAPI
-	temperatureRepo := weatherAPI
+	city := cepAPI
+	temperature := temperatureAPI
 
-	getCityUseCase := usecase.NewGetCityUseCase(cityRepo)
-	getTemperatureUseCase := usecase.NewGetTemperatureUseCase(cityRepo, temperatureRepo)
+	getCityUseCase := usecase.NewGetCityUseCase(city)
+	getTemperatureUseCase := usecase.NewGetTemperatureUseCase(city, temperature)
 
 	cityHandler := handlers.NewCityHandler(getCityUseCase)
 	temperatureHandler := handlers.NewTemperatureHandler(getTemperatureUseCase)
 
-	// Setup routes
 	http.HandleFunc("/city/", cityHandler.GetCity)
 	http.HandleFunc("/temperature/", temperatureHandler.GetTemperature)
 
-	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
