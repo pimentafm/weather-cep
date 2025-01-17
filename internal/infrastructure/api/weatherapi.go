@@ -10,6 +10,10 @@ type WeatherAPI struct {
 	apiKey string
 }
 
+type WeatherAPIInterface interface {
+	GetTemperatureByCity(city string) (float64, error)
+}
+
 type weatherAPIResponse struct {
 	Current struct {
 		TempC float64 `json:"temp_c"`
