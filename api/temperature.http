@@ -1,17 +1,14 @@
 ### Variables
-@baseUrl = http://localhost:8080
-
+# @baseUrl = http://localhost:8080
+@baseUrl = https://cloudrun-goexpert-weather-59578092225.us-central1.run.app
 ### Get Temperature
 GET {{baseUrl}}/temperature/35780000
-Host : localhost:8080
 Content-Type: application/json
 
 ### Get Temperature - invalid CEP
 GET {{baseUrl}}/temperature/35780 00
-Host : localhost:8080
 Content-Type: application/json
 
 ### Get Temperature - invalid CEP correct format
 GET {{baseUrl}}/temperature/35780300
-Host : localhost:8080
 Content-Type: application/json
