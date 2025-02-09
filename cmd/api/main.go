@@ -37,6 +37,8 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("Starting server on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("Starting server on port %s...", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
