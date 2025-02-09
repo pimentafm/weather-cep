@@ -43,6 +43,11 @@ Weather CEP is a simple API that provides weather information based on the Brazi
     make run
     ```
 
+- To run the tests:
+    ```sh
+    make test
+    ```
+
 - To build the Docker image:
     ```sh
     make weatherapi-build

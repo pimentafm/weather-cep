@@ -6,6 +6,9 @@ build:
 run:
 	go run cmd/api/main.go
 
+test:
+	go test -cover ./internal/infrastructure/handlers/
+
 weatherapi-build:
 	docker build -t "$(PROJECT_NAME)/weatherapi:v1.0.0" -f Dockerfile .
 
