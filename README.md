@@ -8,6 +8,7 @@ Weather CEP is a simple API that provides weather information based on the Brazi
 - Go 1.23.6+
 - Docker
 - Make
+- Cloud Run VSCode extension
 
 ## Setup
 
@@ -83,6 +84,23 @@ You can use the provided HTTP file to test the API endpoints:
 
 1. Open the `api/temperature.http` file in your preferred HTTP client (e.g., VSCode REST Client).
 2. Execute the requests to test the API.
+
+```http
+### Variables
+@baseUrl = https://cloudrun-goexpert-weather-59578092225.us-central1.run.app
+
+### Get Temperature
+GET {{baseUrl}}/temperature/35780000
+Content-Type: application/json
+
+### Get Temperature - invalid CEP
+GET {{baseUrl}}/temperature/35780 00
+Content-Type: application/json
+
+### Get Temperature - invalid CEP correct format
+GET {{baseUrl}}/temperature/35780300
+Content-Type: application/json
+```
 
 ## License
 
